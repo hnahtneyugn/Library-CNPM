@@ -6,9 +6,9 @@ from src.routers import books
 app = FastAPI()
 
 # Only use this when first create the schemas, else disable
-# @app.on_event("startup")
-# async def startup_event():
-#     await init_db()
+@app.on_event("startup")
+async def startup_event():
+    await init_db()
 
 
 @app.on_event("shutdown")
