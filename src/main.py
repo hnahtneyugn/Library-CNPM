@@ -1,11 +1,13 @@
 from fastapi import FastAPI
 from tortoise import Tortoise
 from src.database import init_orm, init_db
-from src.routers import books
+from src.routers import books, authors, subjects
 
 app = FastAPI()
 
 # Only use this when first create the schemas, else disable
+
+
 # @app.on_event("startup")
 # async def startup_event():
 #     await init_db()
@@ -18,6 +20,8 @@ async def shutdown_event():
 init_orm(app)
 
 app.include_router(books.router, prefix='/books', tags=['books'])
+app.include_router(authors.router, prefix='/authors', tags=['authors'])
+app.include_router(subjects.router, prefix='/subjects', tags=['subjects'])
 
 # Debug: In ra danh sách route
 for route in app.routes:
