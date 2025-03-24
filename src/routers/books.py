@@ -3,7 +3,6 @@ from src.crud import books_crud
 
 router = APIRouter()
 
-
 @router.get('/fetch-data')
 async def fetch_and_save(subject: str, limit: int = 100):
     try:

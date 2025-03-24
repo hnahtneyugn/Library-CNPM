@@ -1,20 +1,18 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional
 
 
 class SubjectSchema(BaseModel):
     name: str
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class AuthorSchema(BaseModel):
     key: str
     name: Optional[str]
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class BookSchema(BaseModel):
@@ -25,8 +23,7 @@ class BookSchema(BaseModel):
     first_publish_year: Optional[int]
     views: int = 0
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class BookDetailsSchema(BaseModel):
@@ -43,5 +40,10 @@ class BookDetailsSchema(BaseModel):
     contributions: Optional[List[str]]
     number_of_pages: Optional[int]
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
+
+class UserSchema(BaseModel):
+    username: str = Field(..., min_length=3, max_length=255) # "..." means "required, not optional"
+    password: str = Field(..., min_length=8)
+
+    model_config = {"from_attributes": True}
