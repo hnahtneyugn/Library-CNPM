@@ -39,3 +39,14 @@ class User(Model):
 
     class Meta:
         table = 'users'
+
+class UserActivity(Model):
+    id = fields.IntField(primary_key=True, auto_increment=True)
+    tracking_id = fields.CharField(max_length=36)  
+    user_id = fields.IntField(null=True) 
+    username = fields.CharField(max_length=255, null=True) 
+    path = fields.CharField(max_length=255)  
+    timestamp = fields.DatetimeField(auto_now_add=True)
+
+    class Meta:
+        table = "user_activity"

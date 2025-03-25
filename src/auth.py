@@ -8,7 +8,7 @@ from src.models import User
 
 SECRET_KEY = "bacccfb18c0e7d9b709d3371692a385554ddebf1fd9c5a63ea419b028ec4e859"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -46,7 +46,10 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         raise credentials_exception
     
     user = await User.filter(username=username).first()
-    print(f"Found user: {user}")
+    if user:
+        print(f"Found user: {user.username}")
+    else:
+        print("No user found!")
     if user is None:
         raise credentials_exception
     return user
