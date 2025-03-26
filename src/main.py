@@ -48,7 +48,8 @@ async def track_user_activity(request: Request, call_next):
         except HTTPException as e:
             print(f"Auth failed: {e.detail}")
 
-    await UserActivity.create(tracking_id=tracking_id, user_id=user_id, username=username, path=request.url.path)
+    if (user_id is not None and username is not None):
+        await UserActivity.create(tracking_id=tracking_id, user_id=user_id, username=username, path=request.url.path)
 
     response = await call_next(request)
     response.set_cookie(
