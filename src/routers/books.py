@@ -40,6 +40,7 @@ async def get_books(
     return books
 
 
+
 @router.get('/{work_key}', response_model=BookDetailsSchema)
 async def get_book_details(work_key: str):
     book = await books_crud.get_book_details(work_key=work_key)

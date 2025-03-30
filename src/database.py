@@ -6,8 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DB_URL = os.getenv(
-    "DATABASE_URL", "postgres://postgres:Hson2005%40%23@localhost:5432/bookhub")
+DB_URL = os.getenv("DATABASE_URL")
 
 
 async def init_db():

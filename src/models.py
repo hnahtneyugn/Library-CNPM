@@ -31,3 +31,35 @@ class Subject(Model):
 
     class Meta:
         table = 'subjects'
+
+class User(Model):
+    user_id = fields.IntField(primary_key=True, auto_increment=True)
+    username = fields.CharField(max_length=255, unique=True)
+    hashed_password = fields.CharField(max_length=255)
+
+    class Meta:
+        table = 'users'
+
+class UserActivity(Model):
+    id = fields.IntField(primary_key=True, auto_increment=True)
+    tracking_id = fields.CharField(max_length=36)  
+    user_id = fields.IntField(null=True) 
+    username = fields.CharField(max_length=255, null=True) 
+    path = fields.CharField(max_length=255)  
+    timestamp = fields.DatetimeField(auto_now_add=True)
+
+    class Meta:
+        table = "user_activity"
+
+
+class FavoriteBook(Model):
+    user = fields.ForeignKeyField(
+        "models.User", related_name="favorite_books", on_delete=fields.CASCADE
+    )
+    book = fields.ForeignKeyField(
+        "models.Book", related_name="favorited_users", on_delete=fields.CASCADE
+    )
+
+    class Meta:
+        table = "favorite_books"
+        unique_together = ("user", "book")
