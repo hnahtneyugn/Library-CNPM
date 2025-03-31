@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional
 
 
@@ -57,3 +57,14 @@ class AuthorDetailsSchema(BaseModel):
     bio: Optional[str]
     photos: Optional[List[int]]
     source_records: Optional[List[str]]
+
+class UserSchema(BaseModel):
+    username: str = Field(..., min_length=3, max_length=255) # "..." means "required, not optional"
+    password: str = Field(..., min_length=8)
+
+    class Config:
+        from_attributes = True
+
+class FavoriteBooksResponse(BaseModel):
+    user_id: int
+    favorite_books: List[BookSchema]
