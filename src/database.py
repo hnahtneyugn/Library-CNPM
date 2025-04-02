@@ -6,23 +6,32 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DB_URL = os.getenv(
-    "DATABASE_URL", "postgres://postgres:Hson2005%40%23@localhost:5432/bookhub")
+DB_URL = os.getenv("DATABASE_URL")
 
 
 async def init_db():
     await Tortoise.init(
         db_url=DB_URL,
-        modules={"models": ["src.models"]}
+        modules={"models": ["src.models", "aerich.models"]}
     )
     await Tortoise.generate_schemas()
+
+
+TORTOISE_ORM = {
+    "connections": {"default": DB_URL},
+    "apps": {
+        "models": {
+            "models": ["src.models", "aerich.models"],  # Include aerich.models
+            "default_connection": "default",
+        }
+    }
+}
 
 
 def init_orm(app: FastAPI):
     register_tortoise(
         app,
-        db_url=DB_URL,
-        modules={"models": ["src.models"]},
+        config=TORTOISE_ORM,
         generate_schemas=False,
         add_exception_handlers=True,
     )

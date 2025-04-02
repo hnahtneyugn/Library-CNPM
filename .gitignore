@@ -1,0 +1,10 @@
+# Enviroment file
+.env
+
+# Python compiled files
+*.pyc
+__pycache__/
+
+# aerich migration
+migrations/
+pyproject.toml

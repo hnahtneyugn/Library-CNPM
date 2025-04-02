@@ -17,7 +17,7 @@ async def fetch_books_by_subjects(subject: str, limit: int):
     offset = 0
     retries = 5
     async with httpx.AsyncClient(timeout=30.0) as client:
-        while offset < 10000:
+        while offset < 2000:
             params = {
                 'limit': limit,
                 'offset': offset
@@ -118,7 +118,7 @@ async def fetch_book_edition(work_key: str):
             response = await client.get(base_url, headers=headers)
             if response.status_code == 200:
                 edition_data = response.json()
-                entry = edition_data.get('entries')
+                entry = edition_data.get('entries')[0]
                 isbn = entry.get('isbn_13', [])
                 publishers = entry.get('publishers', [])
                 source_records = entry.get('source_records', [])
@@ -151,9 +151,9 @@ async def fetch_book_ratings(work_key: str):
     base_url = f'https://openlibrary.org/works/{work_key}/ratings.json'
     ratings = {}
 
-    async with httpx.AsyncClient as client:
+    async with httpx.AsyncClient(timeout=30) as client:
         try:
-            response = client.get(base_url, headers=headers)
+            response = await client.get(base_url, headers=headers)
 
             if response.status_code == 200:
                 ratings = response.json()
@@ -165,3 +165,48 @@ async def fetch_book_ratings(work_key: str):
             print(f'Error: {e}')
 
     return ratings
+
+
+async def fetch_author_details(key: str):
+    """Fetch author details from Open Library API
+
+    Args:
+        key (str): author's key
+    """
+
+    base_url = f'https://openlibrary.org/authors/{key}.json'
+    async with httpx.AsyncClient(timeout=30) as client:
+        try:
+            response = await client.get(base_url, headers=headers)
+            data = response.json()
+
+            if response.status_code == 200:
+                personal_name = data.get('personal_name', '')
+                birth_date = data.get('birth_date', '')
+                links = data.get('links', [])
+                alternate_names = data.get('alternate_names', [])
+                name = data.get('name', '')
+                bio = data.get('bio')
+                if isinstance(bio, dict):
+                    bio = bio.get('value', '')
+                photos = data.get('photos', [])
+                source_records = data.get('source_records', [])
+
+                author_details = {
+                    'personal_name': personal_name,
+                    'birth_date': birth_date,
+                    'links': links,
+                    'alternate_names': alternate_names,
+                    'name': name,
+                    'bio': bio,
+                    'photos': photos,
+                    'source_records': source_records
+                }
+
+            else:
+                print(f'Error: {response.status_code}')
+
+        except Exception as e:
+            print(f'Error: {str(e)}')
+
+    return author_details

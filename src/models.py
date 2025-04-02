@@ -50,3 +50,16 @@ class UserActivity(Model):
 
     class Meta:
         table = "user_activity"
+
+
+class FavoriteBook(Model):
+    user = fields.ForeignKeyField(
+        "models.User", related_name="favorite_books", on_delete=fields.CASCADE
+    )
+    book = fields.ForeignKeyField(
+        "models.Book", related_name="favorited_users", on_delete=fields.CASCADE
+    )
+
+    class Meta:
+        table = "favorite_books"
+        unique_together = ("user", "book")
