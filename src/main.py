@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Request
 from tortoise import Tortoise
 from src.database import init_orm, init_db
-from src.routers import books, authors, subjects, signin_signup, favorite_books
+from src.routers import books, authors, subjects, signin_signup, favorite_books, rating_books, comment_books
 from src.auth import *
 from src.models import UserActivity
 import uuid
@@ -26,6 +26,8 @@ app.include_router(books.router, prefix='/books', tags=['books'])
 app.include_router(authors.router, prefix='/authors', tags=['authors'])
 app.include_router(subjects.router, prefix='/subjects', tags=['subjects'])
 app.include_router(favorite_books.router, prefix='/favorite', tags=['favorite'])
+app.include_router(rating_books.router, prefix='/rating', tags=['rating'])
+app.include_router(comment_books.router, prefix='/comment', tags=['comment'])
 
 
 # Debug: In ra danh sách route

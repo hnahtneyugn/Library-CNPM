@@ -58,6 +58,7 @@ class AuthorDetailsSchema(BaseModel):
     photos: Optional[List[int]]
     source_records: Optional[List[str]]
 
+
 class UserSchema(BaseModel):
     username: str = Field(..., min_length=3, max_length=255) # "..." means "required, not optional"
     password: str = Field(..., min_length=8)
@@ -65,6 +66,15 @@ class UserSchema(BaseModel):
     class Config:
         from_attributes = True
 
+
 class FavoriteBooksResponse(BaseModel):
     user_id: int
     favorite_books: List[BookSchema]
+
+
+class RateRequest(BaseModel):
+    score: int
+
+
+class CommentRequest(BaseModel):
+    content: str

@@ -5,7 +5,6 @@ from models import User
 
 TORTOISE_ORM = {
     "connections": {
-        # "default": "postgres://postgres:Thanh16042005%40@localhost:5432/mybookhub"
         "default": "postgres://postgres:12345678@localhost:5432/bookhub"
     },
     "apps": {
