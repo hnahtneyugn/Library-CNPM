@@ -46,11 +46,22 @@ class UserActivity(Model):
     user_id = fields.IntField(null=True) 
     username = fields.CharField(max_length=255, null=True) 
     path = fields.CharField(max_length=255)  
+    prefix = fields.CharField(max_length=50, null=True)  
+    sub_path = fields.CharField(max_length=200, null=True) 
     timestamp = fields.DatetimeField(auto_now_add=True)
 
     class Meta:
         table = "user_activity"
 
+class UserBook(Model):
+    id = fields.IntField(primary_key=True, auto_increment=True)
+    username = fields.CharField(max_length=255)
+    bookname = fields.CharField(max_length=255)
+    click_times = fields.IntField(null=False)
+
+    class Meta:
+        table = "user_book"
+        unique_together = ("username", "bookname")
 
 class FavoriteBook(Model):
     user = fields.ForeignKeyField(

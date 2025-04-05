@@ -1,17 +1,18 @@
 from fastapi import FastAPI, HTTPException, Request
 from tortoise import Tortoise
+from tortoise.expressions import F
 from src.database import init_orm, init_db
 from src.routers import books, authors, subjects, signin_signup, favorite_books
 from src.auth import *
-from src.models import UserActivity
+from src.models import UserActivity, UserBook
 import uuid
 
 app = FastAPI()
 
 # Only use this when first create the schemas, else disable
-# @app.on_event("startup")
-# async def startup_event():
-#     await init_db()
+@app.on_event("startup")
+async def startup_event():
+    await init_db()
 
 
 @app.on_event("shutdown")
@@ -52,8 +53,19 @@ async def track_user_activity(request: Request, call_next):
         except HTTPException as e:
             print(f"Auth failed: {e.detail}")
 
-    if (user_id is not None and username is not None):
-        await UserActivity.create(tracking_id=tracking_id, user_id=user_id, username=username, path=request.url.path)
+    full_path = request.url.path
+    path_parts = full_path.strip("/").split("/", 1)  
+    prefix = path_parts[0] if path_parts else ""    
+    sub_path = path_parts[1] if len(path_parts) > 1 else "" 
+
+    if username is not None and user_id is not None:
+        await UserActivity.create(tracking_id=tracking_id, user_id=user_id, username=username, path=request.url.path, prefix=prefix, sub_path=sub_path)
+        
+        if prefix == "books":
+            if await UserBook.filter(username=username, bookname=sub_path).exists():
+                await UserBook.filter(username=username, bookname=sub_path).update(click_times=F("click_times") + 1)
+            else:
+                await UserBook.create(username=username, bookname=sub_path, click_times=1)
 
     response = await call_next(request)
     response.set_cookie(
