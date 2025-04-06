@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta, timezone
-from typing import Annotated
+from typing import Annotated, Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from fastapi import HTTPException, status, Depends
+from fastapi import HTTPException, status, Depends, Request
 from fastapi.security import OAuth2PasswordBearer
 from src.models import User
 
@@ -13,6 +13,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="authentication/signin")
+oauth2_scheme_non_required = OAuth2PasswordBearer(tokenUrl="authentication/signin", auto_error=False)
 
 def get_hashed_password(password: str) -> str:
     return pwd_context.hash(password)
@@ -29,6 +30,31 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+# New custom dependency for optional authentication (for get_book_details)
+async def get_current_user_optional(token: Annotated[Optional[str], Depends(oauth2_scheme_non_required)]):
+    if not token:
+        print("No token provided")
+        return None
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("sub")
+        print(f"Extracted username: {username}")
+        if username is None:
+            print("No username in token")
+            return None
+    except JWTError as e:
+        print(f"JWT error: {e}")
+        return None
+    
+    user = await User.filter(username=username).first()
+    if user:
+        print(f"Found user: {user.username}")
+    else:
+        print(f"No user found for username: {username}")
+    if user is None:
+        return None
+    return user
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     credentials_exception = HTTPException(
