@@ -2,10 +2,16 @@ from tortoise import Tortoise, run_async
 from faker import Faker
 from passlib.context import CryptContext
 from models import User
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DB_URL = os.getenv("DATABASE_URL")
 
 TORTOISE_ORM = {
     "connections": {
-        "default": "postgres://postgres:Thanh16042005%40@localhost:5432/mybookhub"
+        "default": DB_URL
     },
     "apps": {
         "models": {

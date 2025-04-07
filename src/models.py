@@ -74,3 +74,39 @@ class FavoriteBook(Model):
     class Meta:
         table = "favorite_books"
         unique_together = ("user", "book")
+
+
+class Rating(Model):
+    rating_id = fields.IntField(pk=True)
+    user = fields.ForeignKeyField("models.User", related_name="ratings", on_delete=fields.CASCADE)
+    book = fields.ForeignKeyField("models.Book", related_name="ratings", on_delete=fields.CASCADE)
+    score = fields.IntField()
+    created_at = fields.DatetimeField(auto_now_add=True)
+
+    class Meta:
+        table = "ratings"
+        unique_together = ("user", "book")
+
+
+class Comment(Model):
+    comment_id = fields.IntField(pk=True)
+    book = fields.ForeignKeyField('models.Book', related_name='comments', on_delete=fields.CASCADE)
+    user = fields.ForeignKeyField('models.User', related_name='comments', on_delete=fields.CASCADE)
+    content = fields.TextField()
+    parent = fields.ForeignKeyField('models.Comment', related_name='replies', null=True)
+    created_at = fields.DatetimeField(auto_now_add=True)
+
+    class Meta:
+        table = "comments"
+
+
+class CommentLike(Model):
+    commentlike_id = fields.IntField(pk=True)
+    comment = fields.ForeignKeyField('models.Comment', related_name='likes', on_delete=fields.CASCADE)
+    user = fields.ForeignKeyField('models.User', related_name='liked_comments', on_delete=fields.CASCADE)
+    is_like = fields.IntField(choices=[(1, 'Like'), (-1, 'Dislike')])
+    created_at = fields.DatetimeField(auto_now_add=True)
+
+    class Meta:
+        table = "comment_likes"
+        unique_together = ("comment", "user")

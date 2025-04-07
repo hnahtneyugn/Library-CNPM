@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException, Query
 from src.crud import books_crud
 from src.schemas import BookSchema, BookDetailsSchema
-from src.models import User
 from enum import Enum
 from typing import List
 
