@@ -120,7 +120,6 @@ async def get_book_details(work_key: str):
     book_details.update(details)
     book_details.update(edition)
     book_details.update({'ratings': ratings})
-    print(book_details)
 
     return book_details
 

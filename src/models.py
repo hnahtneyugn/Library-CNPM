@@ -32,6 +32,7 @@ class Subject(Model):
     class Meta:
         table = 'subjects'
 
+
 class User(Model):
     user_id = fields.IntField(primary_key=True, auto_increment=True)
     username = fields.CharField(max_length=255, unique=True)
@@ -40,12 +41,13 @@ class User(Model):
     class Meta:
         table = 'users'
 
+
 class UserActivity(Model):
     id = fields.IntField(primary_key=True, auto_increment=True)
-    tracking_id = fields.CharField(max_length=36)  
-    user_id = fields.IntField(null=True) 
-    username = fields.CharField(max_length=255, null=True) 
-    path = fields.CharField(max_length=255)  
+    tracking_id = fields.CharField(max_length=36)
+    user_id = fields.IntField(null=True)
+    username = fields.CharField(max_length=255, null=True)
+    path = fields.CharField(max_length=255)
     timestamp = fields.DatetimeField(auto_now_add=True)
 
     class Meta:
@@ -63,3 +65,13 @@ class FavoriteBook(Model):
     class Meta:
         table = "favorite_books"
         unique_together = ("user", "book")
+
+
+class BookEmbedding(Model):
+    book = fields.ForeignKeyField(
+        "models.Book", related_name="book_embedding", on_delete=fields.CASCADE, pk=True
+    )
+    embedding = fields.JSONField(null=True)
+
+    class Meta:
+        table = "book_embeddings"

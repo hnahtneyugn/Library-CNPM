@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Request
 from tortoise import Tortoise
 from src.database import init_orm, init_db
-from src.routers import books, authors, subjects, signin_signup, favorite_books
+from src.routers import books, authors, subjects, signin_signup, favorite_books, recommendation
 from src.auth import *
 from src.models import UserActivity
 import uuid
@@ -21,16 +21,20 @@ async def shutdown_event():
 init_orm(app)
 
 app.include_router(books.router, prefix='/books', tags=['books'])
-app.include_router(signin_signup.router, prefix='/authentication', tags=['authentication'])
-app.include_router(books.router, prefix='/books', tags=['books'])
+app.include_router(signin_signup.router,
+                   prefix='/authentication', tags=['authentication'])
 app.include_router(authors.router, prefix='/authors', tags=['authors'])
 app.include_router(subjects.router, prefix='/subjects', tags=['subjects'])
-app.include_router(favorite_books.router, prefix='/favorite', tags=['favorite'])
+app.include_router(favorite_books.router,
+                   prefix='/favorite', tags=['favorite'])
+app.include_router(recommendation.router,
+                   prefix='/recommendations', tags=['recommendations'])
 
 
 # Debug: In ra danh sách route
 for route in app.routes:
     print(f"Path: {route.path}, Methods: {route.methods}")
+
 
 @app.middleware("http")
 async def track_user_activity(request: Request, call_next):
@@ -59,7 +63,7 @@ async def track_user_activity(request: Request, call_next):
     response = await call_next(request)
     response.set_cookie(
         key="tracking_id",
-        value=tracking_id,  
+        value=tracking_id,
         httponly=True,        # Prevent JavaScript access (security)
         max_age=30*24*60*60,        # Cookie lasts 30 days
         samesite="lax",     # CSRF protection
