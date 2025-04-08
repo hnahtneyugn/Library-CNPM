@@ -25,14 +25,14 @@ async def fetch_and_save(subject: str, limit: int = 100):
         await books_crud.save_books_by_subject(subject=subject, limit=limit)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    return {'message': 'Books saved succesfully!'}
+    return {'message': 'Books saved successfully!'}
 
 
 @router.get('/', response_model=List[BookSchema])
 async def get_books(
     offset: int = Query(0, ge=0),
     limit: int = Query(100, le=500, ge=1),
-    order_by: OrderBy = Query(OrderBy.title, description='field to sort by'),
+    order_by: OrderBy = Query(OrderBy.title, description='Field to sort by'),
     order: Order = Query(Order.asc, description='sort order'),
     search: str = Query(None, description='search query')
 ):
@@ -40,12 +40,10 @@ async def get_books(
     return books
 
 
-
 @router.get('/{work_key}', response_model=BookDetailsSchema)
 async def get_book_details(work_key: str):
     book = await books_crud.get_book_details(work_key=work_key)
     if not book:
         raise HTTPException(status_code=404, detail='Book not found')
-
     book = BookDetailsSchema(**book)
     return book

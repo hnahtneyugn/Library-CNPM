@@ -7,10 +7,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+DB_URL = os.getenv("DATABASE_URL")
+
 TORTOISE_ORM = {
     "connections": {
-        # "default": "postgres://postgres:Thanh16042005%40@localhost:5432/mybookhub"
-        "default": os.getenv('DATABASE_URL')
+        "default": DB_URL
     },
     "apps": {
         "models": {

@@ -47,10 +47,10 @@ async def save_books_by_subject(subject: str, limit: int = 100):
 
                 except Exception as e:
                     raise Exception(
-                        f'Error processing book {book_data.get('title', '')}: {str(e)}')
+                        f"Error processing book {book_data.get('title', '')}: {str(e)}")
             print('Books and authors gotten and created!')
     except Exception as e:
-        print(f'Transaction failed: {e}')
+        print(f'Transaction failed: {str(e)}')
     finally:
         print('Transaction Complete!')
 

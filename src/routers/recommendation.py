@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.get("/", response_model=List[BookSchema])
-async def get_recommendations(current_user: User = Depends(get_current_user)):
+async def get_recommendations(limit: int = 10, current_user: User = Depends(get_current_user)):
     """Get book recommendations for a user.
 
     Args:
@@ -19,10 +19,10 @@ async def get_recommendations(current_user: User = Depends(get_current_user)):
     """
 
     # Call the recommendation function from the CRUD module
-    recommendations = await recommend_books(current_user.username)
+    recommendations = await recommend_books(current_user.username, limit)
     if not recommendations:
         raise HTTPException(status_code=404, detail="No recommendations found")
-    return [BookSchema(**book) for book in recommendations]
+    return [BookSchema.from_orm(book) for book in recommendations]
 
 
 @router.get("/fetch-embedding")
