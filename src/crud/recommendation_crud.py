@@ -16,6 +16,7 @@ model = BertModel.from_pretrained('bert-base-uncased')
 book_embeddings = None
 embedding_list = None
 book_map = None
+quantizer = None
 index = None
 
 
@@ -35,9 +36,16 @@ async def get_book_map_and_embedding_list():
 
 
 async def build_faiss_index():
-    global index
-    index = faiss.IndexFlatL2(embedding_list[0].shape[0])
-    index.add(np.stack(embedding_list))
+    global quantizer, index
+    nlist = 100
+    d = embedding_list[0].shape[0]
+    quantizer = faiss.IndexFlatL2(d)
+    index = faiss.IndexIVFFlat(quantizer, d, nlist)
+
+    data = np.stack(embedding_list)
+    index.train(data)
+    index.add(data)
+    index.nprobe = 6
 
 
 async def get_embedding(text: str, publish_year: int) -> torch.Tensor:
