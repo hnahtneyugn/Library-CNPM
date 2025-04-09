@@ -68,12 +68,14 @@ class UserBook(Model):
 
 
 class FavoriteBook(Model):
+    favorite_id = fields.IntField(pk=True)
     user = fields.ForeignKeyField(
         "models.User", related_name="favorite_books", on_delete=fields.CASCADE
     )
     book = fields.ForeignKeyField(
         "models.Book", related_name="favorited_users", on_delete=fields.CASCADE
     )
+    created_at = fields.DatetimeField(auto_now_add=True)
 
     class Meta:
         table = "favorite_books"

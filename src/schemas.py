@@ -64,14 +64,50 @@ class UserSchema(BaseModel):
         from_attributes = True
 
 
-class FavoriteBooksResponse(BaseModel):
+class FavoriteBooksSchema(BaseModel):
     user_id: int
     favorite_books: List[BookSchema]
 
+    class Config:
+        from_attributes = True
 
 class RateRequest(BaseModel):
     score: int
 
+    class Config:
+        from_attributes = True
+
+
+class RateSummarySchema(BaseModel):
+    rating_summary: dict
+    rating_average: float
+    total_ratings: int
+
+    class Config:
+        from_attributes = True
+
 
 class CommentRequest(BaseModel):
     content: str
+
+    class config:
+        from_attributes = True
+
+class CommentSchema(BaseModel):
+    comment_id: int
+    book_id: str
+    user_id: int
+    content: str
+    parent_id: Optional[int]
+    created_at: str
+
+    class Config:
+        from_attributes = True
+
+
+class CommentLikeSchema(BaseModel):
+    like_count: int
+    dislike_count: int
+
+    class Config:
+        from_attributes = True
