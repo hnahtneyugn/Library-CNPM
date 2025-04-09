@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from src.models import Book, Comment, User, CommentLike
 from src.auth import get_current_user
 from src.schemas import CommentRequest, CommentSchema, CommentLikeSchema
+from typing import List
 
 router = APIRouter()
 
@@ -19,7 +20,7 @@ async def add_comment(book_id: str, data: CommentRequest, user: User = Depends(g
     return {"message": "Comment added", "id": comment.comment_id}
 
 
-@router.get("/{book_id}/comments", response_model=CommentSchema)
+@router.get("/{book_id}/comments", response_model=List[CommentSchema])
 async def get_comments(book_id: str):
     '''
     Get all comments for a book.
@@ -31,7 +32,8 @@ async def get_comments(book_id: str):
         raise HTTPException(status_code=404, detail="Book not found")
 
     comments = await Comment.filter(book_id=book_id, parent=None).prefetch_related("replies", "user")
-    return comments
+    return [CommentSchema.from_orm(c) for c in comments]
+
 
 
 @router.post("/{book_id}/comments/{comment_id}/replies")
@@ -48,7 +50,7 @@ async def reply_comment(comment_id: int, data: CommentRequest, user: User = Depe
     return {"message": "Reply added", "id": reply.comment_id}
 
 
-@router.get("/{book_id}/comments/{comment_id}/replies", response_model=CommentSchema)
+@router.get("/{book_id}/comments/{comment_id}/replies", response_model=List[CommentSchema])
 async def get_replies(comment_id: int):
     '''
     Get all replies to a comment.
@@ -60,7 +62,8 @@ async def get_replies(comment_id: int):
         raise HTTPException(status_code=404, detail="Comment not found")
 
     comments = await Comment.filter(parent_id=comment_id).prefetch_related("replies", "user")
-    return comments
+    return [CommentSchema.from_orm(c) for c in comments]
+
 
 
 @router.delete("/{book_id}/comments/{comment_id}")

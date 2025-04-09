@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
+from datetime import datetime
+
 
 
 class SubjectSchema(BaseModel):
@@ -79,8 +81,8 @@ class RateRequest(BaseModel):
 
 
 class RateSummarySchema(BaseModel):
-    rating_summary: dict
-    rating_average: float
+    summary: dict[int, int]
+    average_score: float
     total_ratings: int
 
     class Config:
@@ -99,15 +101,15 @@ class CommentSchema(BaseModel):
     user_id: int
     content: str
     parent_id: Optional[int]
-    created_at: str
+    created_at: datetime
 
     class Config:
         from_attributes = True
 
 
 class CommentLikeSchema(BaseModel):
-    like_count: int
-    dislike_count: int
+    likes_count: int
+    dislikes_count: int
 
     class Config:
         from_attributes = True
