@@ -81,7 +81,12 @@ async def delete_comment(comment_id: int, user: User = Depends(get_current_user)
     if comment.user_id != user.user_id:
         raise HTTPException(status_code=403, detail="You do not have permission to delete this comment")
     
-    await comment.delete()
+    if comment.is_deleted:
+        raise HTTPException(status_code=400, detail="Comment already deleted")
+    
+    comment.is_deleted = True
+    comment.content = "This comment has been deleted"
+    await comment.save()
     return {"message": "Comment deleted"}
 
 

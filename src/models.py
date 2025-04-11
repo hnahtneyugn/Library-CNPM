@@ -106,6 +106,7 @@ class Comment(Model):
     parent = fields.ForeignKeyField(
         'models.Comment', related_name='replies', null=True)
     created_at = fields.DatetimeField(auto_now_add=True)
+    is_deleted = fields.BooleanField(default=False)
 
     class Meta:
         table = "comments"
