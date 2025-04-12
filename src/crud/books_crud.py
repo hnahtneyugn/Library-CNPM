@@ -98,6 +98,8 @@ async def get_book_details(work_key: str):
 
     book = await Book.filter(work_key=work_key).first(
     ).prefetch_related('authors')
+    book.views += 1
+    await book.save(update_fields=['views'])
 
     book_details = {
         'work_key': book.work_key,

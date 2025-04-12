@@ -9,3 +9,10 @@ __pycache__/
 # aerich migration
 migrations/
 pyproject.toml
+
+# test files
+.hypothesis/
+.pytest_cache/
+
+# OpenAPI spec
+openapi.json
