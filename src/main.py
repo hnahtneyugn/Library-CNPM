@@ -31,11 +31,11 @@ app.include_router(authors.router, prefix='/authors',
                    tags=['authors'], dependencies=[Depends(oauth2_scheme_non_required)])
 app.include_router(subjects.router, prefix='/subjects',
                    tags=['subjects'], dependencies=[Depends(oauth2_scheme_non_required)])
-app.include_router(favorite_books.router, prefix='/users',
+app.include_router(favorite_books.router, prefix='/favourite',
                    tags=['favorites'], dependencies=[Depends(oauth2_scheme)])
-app.include_router(rating_books.router, prefix='/ratings',
+app.include_router(rating_books.router, prefix='/rating',
                    tags=['ratings'], dependencies=[Depends(oauth2_scheme)])
-app.include_router(comment_books.router, prefix='/comments',
+app.include_router(comment_books.router, prefix='/comment',
                    tags=['comments'], dependencies=[Depends(oauth2_scheme)])
 app.include_router(recommendation.router,
                    prefix='/recommendations', tags=['recommendations'])
