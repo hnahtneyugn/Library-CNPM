@@ -140,7 +140,7 @@ def test_rate_book(auth_token):
     book_id = "OL82565W"
     payload = {"score": 5}
     response = requests.post(
-        f"{BASE_URL}/books/{book_id}/rate", headers=headers, json=payload)
+        f"{BASE_URL}/ratings/{book_id}", headers=headers, json=payload)
     assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
 
 
@@ -148,7 +148,7 @@ def test_rating_summary_and_average(auth_token):
     headers = {"Authorization": f"Bearer {auth_token}"}
     book_id = "OL82565W"
     response = requests.get(
-        f"{BASE_URL}/books/{book_id}/rate/summary", headers=headers)
+        f"{BASE_URL}/ratings/{book_id}/summary", headers=headers)
     assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
     summary = response.json()
     assert "summary" in summary, "Response should contain 'summary'"
@@ -160,7 +160,7 @@ def test_delete_rating(auth_token):
     headers = {"Authorization": f"Bearer {auth_token}"}
     book_id = "OL82565W"
     response = requests.delete(
-        f"{BASE_URL}/books/{book_id}/rate", headers=headers)
+        f"{BASE_URL}/ratings/{book_id}", headers=headers)
     assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
 
 
@@ -169,7 +169,7 @@ def test_add_comment(auth_token):
     book_id = "OL82565W"
     payload = {"content": "Great book!"}
     response = requests.post(
-        f"{BASE_URL}/books/{book_id}/comments", headers=headers, json=payload)
+        f"{BASE_URL}/comments/{book_id}", headers=headers, json=payload)
     assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
 
 
@@ -177,7 +177,7 @@ def test_get_comment(auth_token):
     headers = {"Authorization": f"Bearer {auth_token}"}
     book_id = "OL82565W"
     response = requests.get(
-        f"{BASE_URL}/books/{book_id}/comments", headers=headers)
+        f"{BASE_URL}/comments/{book_id}", headers=headers)
     assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
     comments = response.json()
     assert isinstance(comments, list), "Response should be a list"
@@ -191,7 +191,7 @@ def test_reply_comment(auth_token):
     comment_id = 1
     payload = {"content": "I agree!"}
     response = requests.post(
-        f"{BASE_URL}/books/OL82565W/comments/{comment_id}/replies", headers=headers, json=payload)
+        f"{BASE_URL}/comments/{comment_id}/replies", headers=headers, json=payload)
     assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
 
 
@@ -199,7 +199,7 @@ def test_get_replies(auth_token):
     headers = {"Authorization": f"Bearer {auth_token}"}
     comment_id = 1
     response = requests.get(
-        f"{BASE_URL}/books/OL82565W/comments/{comment_id}/replies", headers=headers)
+        f"{BASE_URL}/comments/{comment_id}/replies", headers=headers)
     assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
     replies = response.json()
     assert isinstance(replies, list), "Response should be a list"
@@ -213,7 +213,7 @@ def test_like_or_dislike_comment(auth_token):
     comment_id = 1
     params = {"is_like": 1}
     response = requests.post(
-        f"{BASE_URL}/books/OL82565W/comments/{comment_id}/like", headers=headers, params=params)
+        f"{BASE_URL}/comments/{comment_id}/like", headers=headers, params=params)
     assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
 
 
@@ -221,7 +221,7 @@ def test_get_comment_like_count(auth_token):
     headers = {"Authorization": f"Bearer {auth_token}"}
     comment_id = 1
     response = requests.get(
-        f"{BASE_URL}/books/OL82565W/comments/{comment_id}/like", headers=headers)
+        f"{BASE_URL}/comments/{comment_id}/like", headers=headers)
     assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
     like_count = response.json()
     assert "likes_count" in like_count, "Response should contain 'like_count'"
@@ -232,7 +232,7 @@ def test_delete_comment(auth_token):
     headers = {"Authorization": f"Bearer {auth_token}"}
     comment_id = 1
     response = requests.delete(
-        f"{BASE_URL}/books/OL82565W/comments/{comment_id}", headers=headers)
+        f"{BASE_URL}/comments/{comment_id}", headers=headers)
     assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
 
 

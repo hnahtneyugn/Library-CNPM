@@ -6,6 +6,7 @@ import uuid
 
 required_paths = ["favorite", "rating", "comment"]
 
+
 async def track_user_activity(request: Request, call_next):
     print("Middleware triggered")
 
@@ -14,12 +15,12 @@ async def track_user_activity(request: Request, call_next):
         tracking_id = str(uuid.uuid4())
 
     full_path = request.url.path
-    path_parts = full_path.strip("/").split("/", 1)  
-    prefix = path_parts[0] if path_parts else ""    
-    sub_path = path_parts[1] if len(path_parts) > 1 else "" 
+    path_parts = full_path.strip("/").split("/", 1)
+    prefix = path_parts[0] if path_parts else ""
+    sub_path = path_parts[1] if len(path_parts) > 1 else ""
 
     user_id, username = None, None
-    
+
     token = request.headers.get("Authorization", "").replace("Bearer ", "")
     print(f"Token: {token}")
 
@@ -67,7 +68,7 @@ async def track_user_activity(request: Request, call_next):
     response = await call_next(request)
     response.set_cookie(
         key="tracking_id",
-        value=tracking_id,  
+        value=tracking_id,
         httponly=True,        # Prevent JavaScript access (security)
         max_age=30*24*60*60,        # Cookie lasts 30 days
         samesite="lax",     # CSRF protection

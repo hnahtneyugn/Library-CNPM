@@ -6,7 +6,8 @@ from typing import List
 
 router = APIRouter()
 
-@router.post("/{book_id}/comments")
+
+@router.post("/{book_id}")
 async def add_comment(book_id: str, data: CommentRequest, user: User = Depends(get_current_user)):
     '''
     Add a comment to a book.
@@ -15,12 +16,12 @@ async def add_comment(book_id: str, data: CommentRequest, user: User = Depends(g
     book = await Book.get_or_none(work_key=book_id)
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
-    
+
     comment = await Comment.create(book_id=book_id, user_id=user.user_id, content=data.content)
     return {"message": "Comment added", "id": comment.comment_id}
 
 
-@router.get("/{book_id}/comments", response_model=List[CommentSchema])
+@router.get("/{book_id}", response_model=List[CommentSchema])
 async def get_comments(book_id: str):
     '''
     Get all comments for a book.
@@ -35,8 +36,7 @@ async def get_comments(book_id: str):
     return [CommentSchema.from_orm(c) for c in comments]
 
 
-
-@router.post("/{book_id}/comments/{comment_id}/replies")
+@router.post("/{comment_id}/replies")
 async def reply_comment(comment_id: int, data: CommentRequest, user: User = Depends(get_current_user)):
     ''' 
     Reply to a comment.
@@ -45,12 +45,12 @@ async def reply_comment(comment_id: int, data: CommentRequest, user: User = Depe
     parent = await Comment.get_or_none(comment_id=comment_id)
     if not parent:
         raise HTTPException(status_code=404, detail="Comment not found")
-    
+
     reply = await Comment.create(book_id=parent.book_id, user_id=user.user_id, content=data.content, parent=parent)
     return {"message": "Reply added", "id": reply.comment_id}
 
 
-@router.get("/{book_id}/comments/{comment_id}/replies", response_model=List[CommentSchema])
+@router.get("/{comment_id}/replies", response_model=List[CommentSchema])
 async def get_replies(comment_id: int):
     '''
     Get all replies to a comment.
@@ -65,8 +65,7 @@ async def get_replies(comment_id: int):
     return [CommentSchema.from_orm(c) for c in comments]
 
 
-
-@router.delete("/{book_id}/comments/{comment_id}")
+@router.delete("/{comment_id}")
 async def delete_comment(comment_id: int, user: User = Depends(get_current_user)):
     ''' 
     Delete a comment.
@@ -77,20 +76,21 @@ async def delete_comment(comment_id: int, user: User = Depends(get_current_user)
     comment = await Comment.get_or_none(comment_id=comment_id)
     if not comment:
         raise HTTPException(status_code=404, detail="Comment not found")
-    
+
     if comment.user_id != user.user_id:
-        raise HTTPException(status_code=403, detail="You do not have permission to delete this comment")
-    
+        raise HTTPException(
+            status_code=403, detail="You do not have permission to delete this comment")
+
     if comment.is_deleted:
         raise HTTPException(status_code=400, detail="Comment already deleted")
-    
+
     comment.is_deleted = True
     comment.content = "This comment has been deleted"
     await comment.save()
     return {"message": "Comment deleted"}
 
 
-@router.post("/{book_id}/comments/{comment_id}/like")
+@router.post("/{comment_id}/like")
 async def like_or_dislike_comment(comment_id: int, is_like: int, user: User = Depends(get_current_user)):
     '''
     Like or dislike a comment.
@@ -102,12 +102,12 @@ async def like_or_dislike_comment(comment_id: int, is_like: int, user: User = De
     comment = await Comment.get_or_none(comment_id=comment_id)
     if not comment:
         raise HTTPException(status_code=404, detail="Comment not found")
-    
+
     if is_like not in [1, -1, 0]:
         raise HTTPException(status_code=400, detail="The status is invalid")
-    
+
     existing_like = await CommentLike.filter(comment_id=comment_id, user=user).first()
-    
+
     if existing_like:
         if is_like == 0:
             await existing_like.delete()
@@ -116,11 +116,11 @@ async def like_or_dislike_comment(comment_id: int, is_like: int, user: User = De
             await existing_like.save()
     else:
         await CommentLike.create(comment_id=comment_id, user_id=user.user_id, is_like=is_like)
-    
+
     return {"message": "The comment status has been successfully updated."}
 
 
-@router.get("/{book_id}/comments/{comment_id}/like", response_model=CommentLikeSchema)
+@router.get("/{comment_id}/like", response_model=CommentLikeSchema)
 async def get_comment_like_count(comment_id: int):
     ''' 
     Get the like and dislike count of a comment.
@@ -130,16 +130,11 @@ async def get_comment_like_count(comment_id: int):
     comment = await Comment.get_or_none(comment_id=comment_id)
     if not comment:
         raise HTTPException(status_code=404, detail="Comment not found")
-    
+
     likes_count = await CommentLike.filter(comment_id=comment_id, is_like=1).count()
     dislikes_count = await CommentLike.filter(comment_id=comment_id, is_like=-1).count()
-    
+
     return {
         "likes_count": likes_count,
         "dislikes_count": dislikes_count
     }
-
-
-
-
-
