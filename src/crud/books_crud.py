@@ -87,7 +87,6 @@ async def get_book_details(work_key: str):
     Args:
         work_key (str): the book's work key
     """
-
     try:
         details = await fetch_book_details(work_key=work_key)
         edition = await fetch_book_edition(work_key=work_key)
