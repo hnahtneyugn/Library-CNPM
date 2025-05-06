@@ -8,12 +8,11 @@ from src.crud.recommendation_crud import get_book_embeddings, get_book_map_and_e
 
 app = FastAPI()
 
-
-@app.on_event("startup")
-async def startup_event():
-    await get_book_embeddings()
-    await get_book_map_and_embedding_list()
-    await build_faiss_index()
+#@app.on_event("startup")
+#async def startup_event():
+#    await get_book_embeddings()
+#    await get_book_map_and_embedding_list()
+#    await build_faiss_index()
     # await init_db() # Uncomment this line if you want to initialize the database on startup
 
 
@@ -41,3 +40,27 @@ app.include_router(recommendation.router,
                    prefix='/recommendations', tags=['recommendations'])
 
 app.middleware("http")(track_user_activity)
+
+# CORS middleware 
+@app.middleware("http")
+async def add_cors_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
+from fastapi import Request
+from fastapi.middleware.cors import CORSMiddleware
+
+origins = [
+    "http://localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
