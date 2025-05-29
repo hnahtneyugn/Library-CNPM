@@ -18,6 +18,7 @@ Follow these step to set up the project locally
 ### 2. Create a new conda enviroment and load the enviroment.yml file
 ```bash
 conda env create -f environment.yml
+conda active software-engineer
 ```
 ### 3. Start the web backend server
 Before you run the app, you have to uncomment the init_db() in main.py to intialize to database tables
