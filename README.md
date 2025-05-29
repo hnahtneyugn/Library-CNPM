@@ -41,8 +41,16 @@ aerich migrate
 aerich upgrade
 ```
 
+### 4. Start the web frontend server
+After running the backend, you change directory to frontend folder, install dependencies and start server
+```bash
+cd /bookhub-fe
+npm install
+npm run dev
+```
+
 ## Usage
-- Navigate to `localhost:8000` in your web browser to access the web
+- Navigate to `localhost:3000` in your web browser to access the web
 - Browse books, add them to your favorites, explore author details and have disscusions with other users to your heart content
 
 ## Features
