@@ -45,7 +45,7 @@ aerich upgrade
 After running the backend, you change directory to frontend folder, install dependencies and start server
 ```bash
 cd /bookhub-fe
-npm install
+npm install --legacy-peer-deps
 npm run dev
 ```
 
